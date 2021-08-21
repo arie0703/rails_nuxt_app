@@ -2,6 +2,11 @@
 Rails + Nuxt.jsによるアプリケーション  
 フロントはNuxtで、apiをRailsで実装する。  
 
-# 開発環境
-Rails 6.0.4
-yarn 1.22.10
+# 使用技術
+<p>バックエンド</p>
+- Rails 6.0.4
+<p>フロントエンド</p>
+- Vue.js
+- Vuetify
+- Nuxt.js
+- yarn 1.22.10
