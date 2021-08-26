@@ -20,6 +20,15 @@ class Api::V1::CardsController < ApplicationController
         end
     end
 
+    def destroy
+        card = Card.find(params[:id])
+        if card.destroy
+          render json: '削除に成功しました', status: 200
+        else
+          render json: '削除に失敗しました', status: 500
+        end
+      end
+
     private
 
     def card_params
