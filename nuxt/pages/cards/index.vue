@@ -42,9 +42,10 @@
           dark
           v-bind="attrs"
           v-on="on"
+          v-if="$auth.loggedIn"
           @click="dialog = true"
         >
-          Dialog Open
+          New
         </v-btn>
       </template>
       <v-card-text v-if="dialog">
@@ -85,12 +86,15 @@
       </v-form>
       </v-card-text>
     </v-dialog>
+    
+    <v-btn v-if="!$auth.loggedIn" v-on:click="$router.push('/users/sign_in')">Sign In</v-btn>
   </div>
 </template>
 
 
 <script>
 export default {
+  auth: false,
   data: () => {
     return {
       cards: [],
@@ -103,8 +107,10 @@ export default {
 
   mounted() {
     this.fetchContents()
-    
+    this.getCurrentUser()
   },
+
+
 
   computed: {
     disabled() {
@@ -175,6 +181,12 @@ export default {
     },
     toShow(id) {
       this.$router.push(`/cards/${id}`)
+    },
+    logout() {
+      console.log("aaa")
+    },
+    getCurrentUser() {
+      console.log(this.$auth.user)
     }
   }
 }
