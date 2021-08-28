@@ -6,6 +6,8 @@
       app
     >
       <v-list>
+
+        <!-- リンクメニュー -->
         <v-list-item
           v-for="(item, i) in items"
           v-on:click="drawer = false"
@@ -21,6 +23,36 @@
             <v-list-item-title v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
+        <!-- ログイン -->
+        <v-list-item
+          v-on:click="drawer = false"
+          v-if="!$auth.loggedIn"
+          to="/users/sign_in"
+          router
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>mdi-login</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Sign in</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <!-- ログアウト -->
+        <v-list-item
+          v-on:click="drawer = false; logout_dialog = true"
+          v-if="$auth.loggedIn"
+          router
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>mdi-logout</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Sign Out</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-app-bar
@@ -32,8 +64,25 @@
         <router-link to="/" class="nav-title" v-text="title"></router-link>
       </v-toolbar-title>
       <v-spacer />
+      <div class="current-user-info" v-if="$auth.loggedIn">{{ $auth.user.name }}</div>
+      <v-btn v-if="$auth.loggedIn" color="green" @click="logout_dialog=true">Sign out</v-btn>
+      <v-btn v-if="!$auth.loggedIn" color="green" @click="$router.push('/users/sign_in')">Sign In</v-btn>
     </v-app-bar>
     <v-main>
+      <v-dialog
+        v-model="logout_dialog"
+        width="500"
+      >
+        <v-card
+          outlined
+        >
+          <v-container>
+          <v-col>ログアウトしますか？</v-col>
+          <v-btn color="blue" @click="$auth.logout(); logout_dialog=false">はい</v-btn>
+          <v-btn color="orange" @click="logout_dialog = false">キャンセル</v-btn>
+          </v-container>
+        </v-card>
+      </v-dialog>
       <v-container>
         <Nuxt />
       </v-container>
@@ -58,6 +107,10 @@
   color: #ffaa00;
   transition: 0.4s;
 }
+
+.current-user-info {
+  margin-right: 15px;
+}
 </style>
 
 <script>
@@ -65,16 +118,12 @@ export default {
   data () {
     return {
       drawer: false,
+      logout_dialog: false,
       items: [
         {
-          icon: 'mdi-apps',
-          title: 'Welcome',
+          icon: 'mdi-home',
+          title: 'Home',
           to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
         },
         {
           icon: 'mdi-card',

@@ -49,7 +49,29 @@ export default {
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/proxy',
+    '@nuxtjs/auth'
   ],
+
+  auth: {
+    redirect: {
+      login: '/users/sign_in',
+      logout: '/',
+      callback: false,
+      home: '/',
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: '/api/v1/auth/sign_in', method: 'post', propertyName: 'token' },
+          logout: false,
+          user: false
+        },
+      }
+    }
+  },
+  router: {
+    middleware: ['auth']
+  },
 
   proxy: {
     '/api': {
