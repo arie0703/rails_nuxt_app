@@ -1,19 +1,29 @@
 <template>
-  <div class="container py-5" v-if="loading">
+  <div v-if="loading">
     <p>{{ cards.length }}</p>
-    <v-card
-      v-for="card in cards"
-      :key="card.id"
-    >
-      <v-container>
-        <v-row>
-          <v-col @click="toShow(card.id)">{{ card.title }}</v-col>
 
-          <v-icon :right="true" v-on:click="showAlert = true; card_id = card.id">mdi-minus</v-icon>
-        </v-row>
-        
-      </v-container>
-    </v-card>
+    <div class="card-container">
+      <v-card
+        v-for="card in cards"
+        :key="card.id"
+        class="stamp-card"
+      >
+        <v-container>
+          <v-row>
+            <v-col @click="toShow(card.id)">
+              <v-card-title>{{ card.title }}</v-card-title>
+              <v-card-text>{{ card.detail }}</v-card-text>
+              <v-card-text>{{ card.start_date }}</v-card-text>
+            </v-col>
+
+            <v-icon :right="true" v-on:click="showAlert = true; card_id = card.id">mdi-minus</v-icon>
+          </v-row>
+          
+        </v-container>
+      </v-card>
+    </div>
+
+
     <v-dialog
       v-model="showAlert"
       width="500"
@@ -32,69 +42,33 @@
     </v-dialog>
 
 
-    <v-dialog
-      v-model="dialog"
-      width="500"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary lighten-2"
-          dark
-          v-bind="attrs"
-          v-on="on"
-          v-if="$auth.loggedIn"
-          @click="dialog = true"
-        >
-          New
-        </v-btn>
-      </template>
-      <v-card-text v-if="dialog">
-      <v-form>
-  
-        <v-text-field
-          v-model="title"
-          label="title"
-        >
-        </v-text-field>
-        <v-text-field
-          v-model="detail"
-          label="detail"
-        >
-        </v-text-field>
-        <v-text-field
-          v-model="goal"
-          type="number"
-          label="goal"
-          max="100"
-          min="1"
-        >
-        </v-text-field>
-        <v-btn
-          class="mt-3"
-          variant="primary"
-          @click="save()"
-        >
-          保存
-        </v-btn>
-        <v-btn
-          class="mt-3"
-          variant="primary"
-          v-on:click="dialog = false"
-        >
-          閉じる
-        </v-btn>
-      </v-form>
-      </v-card-text>
-    </v-dialog>
+    <New @updateData="fetchContents"></New>
     
     <v-btn v-if="!$auth.loggedIn" v-on:click="$router.push('/users/sign_in')">Sign In</v-btn>
   </div>
 </template>
 
+<style scoped>
+
+.card-container {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.stamp-card {
+  margin: 20px;
+  width: 330px;
+}
+</style>
 
 <script>
+import New from './new.vue'
 export default {
+  
   auth: false,
+  components: {
+    New
+  },
   data: () => {
     return {
       cards: [],
@@ -126,7 +100,9 @@ export default {
           cleared: 0,
           continuation: 0,
           is_started: false,
-          is_done: false
+          is_done: false,
+          start_date: this.start_date,
+          end_date: this.end_date,
         }
       }
     }
@@ -138,6 +114,7 @@ export default {
       this.$axios.get(url)
         .then((res) => {
           this.cards = res.data.cards
+          console.log(res.data.cards);
           this.loading = true
         })
         .catch((err) => {
