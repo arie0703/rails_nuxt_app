@@ -20,6 +20,15 @@ class Api::V1::CardsController < ApplicationController
         end
     end
 
+    def update
+        card = Card.find_by(id: params[:id])
+        if card.update(title: params[:card][:title], detail: params[:card][:detail], goal: params[:card][:goal])
+          render json: '更新に成功しました', status: 200
+        else
+          render json: '更新に失敗しました', status: 500
+        end
+    end
+
     def destroy
         card = Card.find(params[:id])
         if card.destroy
