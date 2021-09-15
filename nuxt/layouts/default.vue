@@ -64,7 +64,9 @@
         <router-link to="/" class="nav-title" v-text="title"></router-link>
       </v-toolbar-title>
       <v-spacer />
-      <div class="current-user-info" v-if="$auth.loggedIn">{{ $auth.user.name }}</div>
+      <div class="current-user-info" v-if="$auth.loggedIn" @click="toMypage($auth.user.id)">
+        {{ $auth.user.email }}
+      </div>
       <v-btn v-if="$auth.loggedIn" color="green" @click="logout_dialog=true">Sign out</v-btn>
       <v-btn v-if="!$auth.loggedIn" color="green" @click="$router.push('/users/sign_in')">Sign In</v-btn>
     </v-app-bar>
@@ -111,6 +113,12 @@
 .current-user-info {
   margin-right: 15px;
 }
+
+.current-user-info:hover {
+  color: #ffaa00;
+  transition: 0.4s;
+  cursor: pointer;
+}
 </style>
 
 <script>
@@ -134,6 +142,20 @@ export default {
       miniVariant: false,
       right: true,
       title: 'Stamper(β)'
+    }
+  },
+  mounted() {
+    this.autoLogout()
+    console.log(this.$auth.user)
+  },
+  methods: {
+    autoLogout() {
+      if (this.$auth.loggedIn && !this.$auth.user.id) { //ログイン中なのにユーザー情報が空になってるときは一旦ログアウト
+        this.$auth.logout()
+      }
+    },
+    toMypage(id) {
+      this.$router.push(`/users/${id}`)
     }
   }
 }

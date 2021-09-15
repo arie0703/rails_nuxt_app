@@ -16,7 +16,7 @@
               <v-card-text>{{ card.start_date }}</v-card-text>
             </v-col>
 
-            <v-icon :right="true" v-on:click="showAlert = true; card_id = card.id">mdi-minus</v-icon>
+            <v-icon v-if="$auth.user.id == card.user_id" :right="true" v-on:click="showAlert = true; card_id = card.id">mdi-minus</v-icon>
           </v-row>
           
         </v-container>
@@ -82,30 +82,6 @@ export default {
   mounted() {
     this.fetchContents()
     this.getCurrentUser()
-  },
-
-
-
-  computed: {
-    disabled() {
-      return this.detail.length === 0
-    },
-
-    params() {
-      return {
-        card: { // 保存する内容
-          title: this.title,
-          detail: this.detail,
-          goal: this.goal,
-          cleared: 0,
-          continuation: 0,
-          is_started: false,
-          is_done: false,
-          start_date: this.start_date,
-          end_date: this.end_date,
-        }
-      }
-    }
   },
 
   methods: {
