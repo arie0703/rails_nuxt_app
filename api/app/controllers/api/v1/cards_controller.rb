@@ -22,7 +22,7 @@ class Api::V1::CardsController < ApplicationController
 
     def update
         card = Card.find_by(id: params[:id])
-        if card.update(title: params[:card][:title], detail: params[:card][:detail], goal: params[:card][:goal])
+        if card.update(card_params)
           render json: '更新に成功しました', status: 200
         else
           render json: '更新に失敗しました', status: 500
@@ -41,6 +41,6 @@ class Api::V1::CardsController < ApplicationController
     private
 
     def card_params
-        params.require(:card).permit(:title, :detail, :goal, :continuation, :cleared, :is_started, :is_done, :start_date, :end_date)
+        params.require(:card).permit(:title, :detail, :goal, :continuation, :cleared, :is_started, :is_done, :start_date, :end_date,:user_id)
     end
 end

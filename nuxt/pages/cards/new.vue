@@ -105,6 +105,7 @@ export default {
           is_done: false,
           start_date: this.start_date,
           end_date: this.end_date,
+          user_id: this.$auth.user.id
         }
       }
     },
