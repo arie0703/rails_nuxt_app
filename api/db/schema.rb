@@ -10,12 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_15_012333) do
+ActiveRecord::Schema.define(version: 2021_09_15_234954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "cards", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "detail", null: false
+    t.integer "continuation", null: false
+    t.integer "goal", null: false
+    t.integer "cleared", null: false
+    t.boolean "is_started", null: false
+    t.boolean "is_done", null: false
+    t.date "start_date"
+    t.date "end_date"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "challenges", force: :cascade do |t|
     t.string "title", null: false
     t.text "detail", null: false
     t.integer "continuation", null: false

@@ -4,6 +4,10 @@ json.cards @cards do |card| #一覧取得
     json.extract! card, :id, :title, :detail, :continuation, :goal, :cleared, :is_started, :is_done, :start_date, :end_date, :created_at, :user_id
 end
 
+json.challenges @challenges do |challenge| #一覧取得
+    json.extract! challenge, :id, :title, :detail, :continuation, :goal, :cleared, :is_started, :is_done, :start_date, :end_date, :created_at, :user_id
+end
+
 json.user do
     json.extract! @user
 end
