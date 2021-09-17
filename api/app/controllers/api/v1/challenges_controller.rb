@@ -1,6 +1,6 @@
 class Api::V1::ChallengesController < ApplicationController
     def index
-        @challenges = Challenge.where(user_id: params[:user_id])
+        @challenges = Challenge.where(user_id: params[:user_id]).order(:id)
         render json: @challenges, status: 200
     end
 
@@ -15,7 +15,6 @@ class Api::V1::ChallengesController < ApplicationController
 
     def show
         challenge = Challenge.find_by(id: params[:id])
-      
         unless @challenge
             render json: challenge, status: 200
         end
