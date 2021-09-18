@@ -41,6 +41,6 @@ class Api::V1::ChallengesController < ApplicationController
     private
 
     def challenge_params
-        params.require(:challenge).permit(:title, :detail, :goal, :continuation, :cleared, :is_started, :is_done, :start_date, :end_date,:user_id)
+        params.require(:challenge).permit(:title, :detail, :goal, :continuation, :cleared, :is_started, :is_done, :start_date, :end_date,:user_id, :done_at)
     end
 end
