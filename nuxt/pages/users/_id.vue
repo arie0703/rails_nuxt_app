@@ -4,40 +4,49 @@
         <p>{{user.email}}</p>
 
         <strong>マイチャレンジ</strong>
-        <v-card
-        v-for="challenge in challenges"
-        :key="challenge.id"
-        width="500"
-        >
-            <v-container>
-                <v-card-text>{{ challenge.title }}</v-card-text>
-                <v-card-text>
-                    達成日数: {{ challenge.cleared}} 
-                    継続: {{ challenge.continuation }}
+        <v-row>
+            <v-card
+            v-for="challenge in challenges"
+            :key="challenge.id"
+            width="300"
+            class="stamp-card"
+            >
+                <v-container>
+                    <v-card-text>{{ challenge.title }}</v-card-text>
+                    <v-card-text>
+                        達成日数: {{ challenge.cleared}} 
+                        継続: {{ challenge.continuation }}
 
-                </v-card-text>
-                <v-card-text>{{ challenge.done_at }}</v-card-text>
-                <v-btn 
-                @click="pushDone(challenge.id, challenge.cleared, challenge.continuation, challenge.done_at)"
-                v-if="!isDoneToday(challenge.done_at)"
-                >
-                    Done
-                </v-btn>
+                    </v-card-text>
 
-                <p v-if="isDoneToday(challenge.done_at)">今日は達成済み</p>
-            </v-container>
-        </v-card>
+                    <Stamps :cleared="challenge.cleared"></Stamps>
+                    <v-card-text>{{ challenge.done_at }}</v-card-text>
+                    <v-btn 
+                    @click="pushDone(challenge.id, challenge.cleared, challenge.continuation, challenge.done_at, challenges.indexOf(challenge))"
+                    v-if="!isDoneToday(challenge.done_at)"
+                    >
+                        Done
+                    </v-btn>
+
+                    <p v-if="isDoneToday(challenge.done_at)">今日は達成済み</p>
+                </v-container>
+            </v-card>
+        </v-row>
     </v-container>
 </template>
 
 <style scoped>
 .v-card {
-    margin-top: 10px;
+    margin: 10px;
 }
 </style>
 <script>
+import Stamps from '../challenges/stamps.vue'
 export default {
     auth: false,
+    components: {
+        Stamps
+    },
     data: () => {
         return {
             user: {},
@@ -133,7 +142,7 @@ export default {
                 console.log("error.")
             })
         },
-        pushDone(id, cleared, continuation, done_at) {
+        pushDone(id, cleared, continuation, done_at, idx) {
             const url = `/api/v1/challenges/${id}`
             this.params.challenge.cleared = cleared + 1
             this.params.challenge.done_at = new Date
@@ -151,14 +160,13 @@ export default {
             this.$axios.put(url, this.params)
                 .then((res) => {
                     console.log("yeah");
-                    this.getMyChallenges()
+                    this.getMyChallenges() // challengesを再取得  
                 })
                 .catch((err) => {
                     console.log("error.")
-                })
-
-            
+                })  
         },
+
     }
 }
 </script>
