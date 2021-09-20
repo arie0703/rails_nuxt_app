@@ -20,47 +20,23 @@
             <v-form>
                 <v-text-field
                 v-model="title"
-                label="title"
+                label="チャレンジ名"
                 >
                 </v-text-field>
                 <v-text-field
                 v-model="detail"
-                label="detail"
+                label="詳細・コメント"
                 >
                 </v-text-field>
                 <v-text-field
                 v-model="goal"
                 type="number"
-                label="goal"
-                max="100"
-                min="1"
+                label="目標日数（5〜30）"
+                max="30"
+                min="5"
                 >
                 </v-text-field>
-                <v-menu v-model="menu" max-width="290px" min-width="290px">
-                    <template v-slot:activator="{ on }">
-                    <v-text-field
-                        slot="activator"
-                        v-model="start_date"
-                        label="開始日"
-                        readonly
-                        v-on="on"
-                    />
-                    </template>
-                    <v-date-picker v-model="start_date" />
-                </v-menu>
-                <v-menu v-model="menu" max-width="290px" min-width="290px">
-                    <!-- ポップアップを追加する要素にv-on="on" -->
-                    <template v-slot:activator="{ on }">
-                    <v-text-field
-                        slot="activator"
-                        v-model="end_date"
-                        label="終了日"
-                        readonly
-                        v-on="on"
-                    />
-                    </template>
-                    <v-date-picker v-model="end_date" />
-                </v-menu>
+
                 <v-btn
                 class="mt-3"
                 variant="primary"

@@ -20,15 +20,27 @@
                     </v-card-text>
 
                     <Stamps :cleared="challenge.cleared"></Stamps>
-                    <v-card-text>{{ challenge.done_at }}</v-card-text>
-                    <v-btn 
-                    @click="pushDone(challenge.id, challenge.cleared, challenge.continuation, challenge.done_at, challenges.indexOf(challenge))"
-                    v-if="!isDoneToday(challenge.done_at)"
-                    >
-                        Done
-                    </v-btn>
 
-                    <p v-if="isDoneToday(challenge.done_at)">今日は達成済み</p>
+                    <div class="private-area" v-if="$auth.user.id == $route.params.id">
+
+
+                        <div v-if="challenge.is_started || challenge.done_at">
+                            <v-card-text>{{ challenge.done_at }}</v-card-text>
+                            <v-btn 
+                            @click="pushDone(challenge.id, challenge.cleared, challenge.continuation, challenge.done_at, challenges.indexOf(challenge))"
+                            v-if="!isDoneToday(challenge.done_at)"
+                            >
+                                Done
+                            </v-btn>
+
+                            <p v-if="isDoneToday(challenge.done_at)">今日は達成済み</p>
+                        </div>
+
+                        <div v-if="!challenge.is_started && !challenge.done_at">
+                            <v-card-text>ボタンを押してスタート！</v-card-text>
+                            <v-btn @click="start(challenge.id)">START</v-btn>
+                        </div>
+                    </div>
                 </v-container>
             </v-card>
         </v-row>
@@ -55,7 +67,6 @@ export default {
             cleared: 0,
             start_of_yesterday: new Date(),
             start_of_today: new Date(),
-            current_date: new Date(),
         }
     },
     mounted() {
@@ -69,7 +80,8 @@ export default {
                 challenge: {
                     cleared: this.cleared,
                     continuation: this.continuation,
-                    done_at: this.current_date
+                    done_at: null,
+                    is_started: true,
                 }
             }
         },
@@ -109,7 +121,7 @@ export default {
             console.log(this.current_date)
         },
         getMyChallenges() {
-            const url = `/api/v1/challenges?user_id=${this.$auth.user.id}`
+            const url = `/api/v1/challenges?user_id=${this.$route.params.id}`
             this.$axios.get(url)
                 .then((res) => {
                 console.log("データ更新メソッドが発火")
@@ -141,6 +153,16 @@ export default {
             .catch((err) => {
                 console.log("error.")
             })
+        },
+        start(id) {
+            const url = `/api/v1/challenges/${id}`
+            this.$axios.put(url, this.params)
+                .then((res) => {
+                    this.getMyChallenges() // challengesを再取得  
+                })
+                .catch((err) => {
+                    console.log("error.")
+                })  
         },
         pushDone(id, cleared, continuation, done_at, idx) {
             const url = `/api/v1/challenges/${id}`
