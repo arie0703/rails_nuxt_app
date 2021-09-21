@@ -12,12 +12,21 @@
 
       <v-container class="stamp-container">
         <v-row v-for="r in row" :key="r">
-          <div v-for="n in 5" :key="n" class="stamp-area"></div>
+          <div v-for="n in 5" :key="n" class="stamp-area">
+            <div class= "goal" v-if="r == row && n == 5 && reminder == 0">
+              GOAL
+            </div>
+          </div>
         </v-row>
 
         <v-row>
-          <div v-for="n in reminder" :key="n" class="stamp-area"></div>
+          <div v-for="n in reminder" :key="n" class="stamp-area">
+            <div class= "goal" v-if="n == reminder">
+              GOAL
+            </div>
+          </div>
         </v-row>
+
       </v-container>
 
       <v-card-text>
@@ -103,6 +112,17 @@
   margin: 1px;
 }
 
+.goal {
+  width: 40px;
+  height: 40px;
+  margin: 2.5px;
+  line-height: 40px;
+  text-align: center;
+  background: darkcyan;
+  font-size: 80%;
+  border-radius: 50%;
+}
+
 .side {
   margin-left: 20px;
 }
@@ -110,6 +130,7 @@
 .row {
   margin: 0;
 }
+
 
 
 </style>
@@ -208,7 +229,13 @@ export default {
     },
     setStampArea(num) {
         this.row = Math.floor(num / 5)
-        this.reminder = num % 5
+        this.reminder = (num % 5)
+
+        // if(this.reminder = 0) {
+        //   this.row -= this.row
+        // } else if (reminder > 1) {
+        //   reminder -= reminder
+        // }
 
         console.log(this.row, this.reminder)
     },

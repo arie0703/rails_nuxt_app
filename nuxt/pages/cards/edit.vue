@@ -13,20 +13,20 @@
                 <v-form>
                     <v-text-field
                     v-model="edit_title"
-                    label="title"
+                    label="チャレンジ内容"
                     >
                     </v-text-field>
                     <v-text-field
                     v-model="edit_detail"
-                    label="detail"
+                    label="詳細・コメント"
                     >
                     </v-text-field>
                     <v-text-field
                     v-model="edit_goal"
                     type="number"
-                    label="goal"
-                    max="100"
-                    min="1"
+                    label="目標日数（5~30日）"
+                    max="30"
+                    min="5"
                     >
                     </v-text-field>
 

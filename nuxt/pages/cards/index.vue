@@ -20,36 +20,22 @@
             <strong>{{ card.title }}</strong>
           </v-card-text>
           <v-container class="stamp-container">
-            <v-row v-for="r in 2" :key="r">
+            <v-row>
               <div v-for="n in 5" :key="n" class="stamp-area"></div>
             </v-row>
-          </v-container>
-          
 
-          <!-- <v-icon v-if="$auth.user.id == card.user_id" :right="true" v-on:click="showAlert = true; card_id = card.id">mdi-minus</v-icon> -->
+            <v-row>
+              <div v-for="n in 4" :key="n" class="stamp-area"></div>
+              <div class="stamp-area">
+                <div class="last-stamp">{{ card.goal }}</div>
+              </div>
+            </v-row>
+          </v-container>
           
           
         </v-container>
       </v-card>
     </div>
-
-
-    <!-- <v-dialog
-      v-model="showAlert"
-      width="500"
-    >
-
-    <v-card-text v-if="showAlert">
-      <v-alert
-        color="orange"
-        type="info"
-      >
-      削除したら戻せないよ！
-      </v-alert>
-      <v-btn @click="destroy(card_id)">削除</v-btn>
-      <v-btn v-on:click="showAlert=false">キャンセル</v-btn>
-    </v-card-text>
-    </v-dialog> -->
 
 
     
@@ -88,6 +74,17 @@
   width: 40px;
   height: 40px;
   margin: 1px;
+}
+
+.last-stamp {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: darkcyan;
+  margin: 2.5px;
+  justify-content: center;
+  line-height: 35px;
+  text-align: center;
 }
 
 .row {
@@ -130,41 +127,6 @@ export default {
         })
         .catch((err) => {
           console.log("error.")
-        })
-    },
-    save() {
-      const url = "/api/v1/cards"
-      this.$axios.post(url, this.params)
-        .then((res) => {
-          // 保存成功時
-          console.log(res)
-          // 保存時にデータを更新する
-          this.fetchContents()
-
-          this.dialog = false // モーダル閉じる
-          this.title = ""
-          this.goal = 0
-          this.detail = ""
-        })
-        .catch((err) => {
-          // 保存失敗時
-        })
-    },
-    destroy(id) {
-      const url = `/api/v1/cards/${id}`
-      console.log(url)
-
-      this.$axios.delete(url)
-        .then(() => {
-          this.fetchContents()
-          this.showAlert = false;
-        })
-        .catch((err) => {
-          const message = err.response.data
-          this.$bvToast.toast(message, {
-            title: 'エラー',
-            variant: 'danger'
-          })
         })
     },
     toShow(id) {

@@ -75,12 +75,6 @@ export default {
           title: this.title,
           detail: this.detail,
           goal: this.goal,
-          cleared: 0,
-          continuation: 0,
-          is_started: false,
-          is_done: false,
-          start_date: this.start_date,
-          end_date: this.end_date,
           user_id: this.$auth.user.id
         }
       }

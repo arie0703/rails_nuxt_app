@@ -41,6 +41,6 @@ class Api::V1::CardsController < ApplicationController
     private
 
     def card_params
-        params.require(:card).permit(:title, :detail, :goal, :continuation, :cleared, :is_started, :is_done, :start_date, :end_date,:user_id)
+        params.require(:card).permit(:title, :detail, :goal, :user_id)
     end
 end
