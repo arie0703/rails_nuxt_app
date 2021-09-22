@@ -41,13 +41,14 @@
           size="sm"
           @click="toTop()"
         >
-          Topへ
+          一覧に戻る
         </v-btn>
         <Edit v-if="$auth.user.id == card.user_id" @updateData="fetchContent" :title.sync="card.title" :detail.sync="card.detail" :goal.sync="card.goal"></Edit>
         <v-btn v-if="$auth.user.id == card.user_id" v-on:click="showAlert = true">削除</v-btn>
         <v-btn
           size="sm"
           @click="isShowAddForm = true"
+          v-if="$auth.loggedIn"
         >
           マイチャレンジに追加
         </v-btn>

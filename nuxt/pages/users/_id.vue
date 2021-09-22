@@ -65,8 +65,8 @@ export default {
             challenges: [],
             continuation: 0,
             cleared: 0,
-            start_of_yesterday: new Date(),
-            start_of_today: new Date(),
+            yesterday: new Date(),
+            today: new Date(),
         }
     },
     mounted() {
@@ -90,7 +90,7 @@ export default {
             return function (done_at) {
                 if (done_at) {
                     done_at = new Date(done_at)
-                    if (done_at > this.start_of_today) {
+                    if (done_at > this.today) {
                         return true
                     }
                 }
@@ -111,14 +111,9 @@ export default {
             })
         },
         setDate() {
-            this.start_of_yesterday.setDate(this.start_of_yesterday.getDate() - 1);
-            this.start_of_yesterday.setHours(0, 0, 0, 0);
-            this.start_of_today.setHours(0, 0, 0, 0);
-            
-            // var y = this.current_date.getFullYear()
-            // var m = ('00' + (dt.getMonth()+1)).slice(-2);
-            // var d = ('00' + (dt.getMonth()+1)).slice(-2);
-            console.log(this.current_date)
+            this.yesterday.setDate(this.yesterday.getDate() - 1);
+            this.yesterday.setHours(0, 0, 0, 0);
+            this.today.setHours(0, 0, 0, 0);
         },
         getMyChallenges() {
             const url = `/api/v1/challenges?user_id=${this.$route.params.id}`
@@ -126,11 +121,16 @@ export default {
                 .then((res) => {
                 console.log("データ更新メソッドが発火")
                 console.log(res.data);
-                console.log(this.start_of_yesterday)
+                console.log(this.yesterday)
                 for(let i = 0; i < res.data.length; i++) { // ここで最後にDoneボタンを押したのが昨日より前かを判定
-                    var last_done = new Date(res.data[i].updated_at)
-                    if(this.start_of_yesterday > last_done) { //もし最後の更新が昨日以前なら
-                        this.toZero(res.data[i].id, res.data[i].cleared) // continuationを0にするメソッド発火
+                    var last_done = new Date(res.data[i].done_at) // jsで
+
+                    console.log(last_done, res.data[i].done_at)
+                    
+                    if(this.yesterday > last_done && res.data[i].continuation > 0) { //もし最後の更新が昨日以前なら
+                        this.toZero(res.data[i].id, res.data[i].cleared, res.data[i].done_at) // continuationを0にするメソッド発火
+                    } else {
+                        console.log(last_done, this.yesterday, "計算できてない")
                     }
                     
                 }
@@ -140,15 +140,19 @@ export default {
                 console.log("error.")
                 })
         },
-        toZero(id, cleared) {
+        toZero(id, cleared, done_at) {
             const url = `/api/v1/challenges/${id}`
             this.params.challenge.cleared = cleared // clearedはそのまま
             this.params.challenge.continuation = 0
+            this.params.challenge.done_at = done_at // done_atもそのまま
 
             this.$axios.put(url, this.params)
             .then((res) => {
                 console.log("continuationが0になったよ");
                 this.fetchContent()
+
+                this.params.challenge.cleared = 0
+                this.params.challenge.done_at = null
             })
             .catch((err) => {
                 console.log("error.")
@@ -168,14 +172,14 @@ export default {
             const url = `/api/v1/challenges/${id}`
             this.params.challenge.cleared = cleared + 1
             this.params.challenge.done_at = new Date
-            if(!done_at) {
-                this.params.challenge.continuation = continuation + 1
-            } else {
-                done_at = new Date(done_at); // jsonのtimestampをjsのDateに変換
-                if (done_at >= this.start_of_yesterday) { //done_atが昨日の0時を超えていれば、継続判定
-                    this.params.challenge.continuation = continuation + 1
-                }
+            done_at = new Date(done_at); // jsonのdateをjsのDateに変換
+
+            if (done_at < this.yesterday) { //Doneが押された時の昨日の日付とdone_atを比較
+                continuation = 0 //最後のDoneが昨日より前と判定されたら、continuationを一旦0にする
             }
+
+            this.params.challenge.continuation = continuation + 1
+
             
 
             console.log(this.params)
