@@ -8,7 +8,7 @@
             <v-card
             v-for="challenge in challenges"
             :key="challenge.id"
-            width="300"
+            width="275"
             class="stamp-card"
             >
                 <v-container>
@@ -19,7 +19,7 @@
 
                     </v-card-text>
 
-                    <Stamps :cleared="challenge.cleared"></Stamps>
+                    <Stamps :cleared="challenge.cleared" :goal="challenge.goal"></Stamps>
 
                     <div class="private-area" v-if="$auth.user.id == $route.params.id">
 

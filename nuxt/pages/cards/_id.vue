@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-5">
+  <div class="container py-5" v-if="display">
     <v-row>
     <v-card width="280">
       <v-card-text>
@@ -9,25 +9,7 @@
         {{ card.detail }}
       </v-card-text>
       
-
-      <v-container class="stamp-container">
-        <v-row v-for="r in row" :key="r">
-          <div v-for="n in 5" :key="n" class="stamp-area">
-            <div class= "goal" v-if="r == row && n == 5 && reminder == 0">
-              GOAL
-            </div>
-          </div>
-        </v-row>
-
-        <v-row>
-          <div v-for="n in reminder" :key="n" class="stamp-area">
-            <div class= "goal" v-if="n == reminder">
-              GOAL
-            </div>
-          </div>
-        </v-row>
-
-      </v-container>
+      <Stamps :cleared="0" :goal="card.goal"></Stamps>
 
       <v-card-text>
         目標日数: {{ card.goal }}（目安）
@@ -99,29 +81,14 @@
 </template>
 
 <style scoped>
-.stamp-container {
+/* Stampsのcontainerのstyleはこっちで調節可 */
+.stamp-container { 
   background-color: rgba(40,40,40,0.8);
-  padding: 10px;
+  padding: 22px;
   width: 260px;
+  height: auto;
   border-radius: 5px;
   margin: 10px;
-}
-.stamp-area {
-  background-color: rgba(60,60,60,0.8);
-  width: 45px;
-  height: 45px;
-  margin: 1px;
-}
-
-.goal {
-  width: 40px;
-  height: 40px;
-  margin: 2.5px;
-  line-height: 40px;
-  text-align: center;
-  background: darkcyan;
-  font-size: 80%;
-  border-radius: 50%;
 }
 
 .side {
@@ -144,10 +111,12 @@
 
 <script>
 import Edit from './edit.vue'
+import Stamps from '../challenges/stamps.vue'
 export default {
   auth: false,
   components: {
-    Edit
+    Edit,
+    Stamps
   },
   data: () => {
     return {
@@ -158,6 +127,7 @@ export default {
       row: 0,
       reminder: 0,
       showAlert: false,
+      display: false,
     }
   },
   computed: {
@@ -187,8 +157,9 @@ export default {
         .then((res) => {
             this.card = res.data
             this.goal = this.card.goal
-            this.setStampArea(this.goal)
+            // this.setStampArea(this.goal)
             console.log(res.data)
+            this.display = true; // cardのデータを受け取ってからビューを表示させないとエラーになる
         })
         .catch(() => {
             this.toTop()
@@ -228,18 +199,7 @@ export default {
           })
         })
     },
-    setStampArea(num) {
-        this.row = Math.floor(num / 5)
-        this.reminder = (num % 5)
 
-        // if(this.reminder = 0) {
-        //   this.row -= this.row
-        // } else if (reminder > 1) {
-        //   reminder -= reminder
-        // }
-
-        console.log(this.row, this.reminder)
-    },
   }
 }
 </script>
