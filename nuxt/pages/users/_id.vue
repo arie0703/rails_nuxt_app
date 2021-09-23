@@ -27,13 +27,14 @@
                         <div v-if="challenge.is_started || challenge.done_at">
                             <v-card-text>{{ challenge.done_at }}</v-card-text>
                             <v-btn 
-                            @click="pushDone(challenge.id, challenge.cleared, challenge.continuation, challenge.done_at, challenges.indexOf(challenge))"
+                            @click="pushDone(challenge.id, challenge.cleared, challenge.continuation, challenge.done_at, challenge.goal)"
                             v-if="!isDoneToday(challenge.done_at)"
                             >
                                 Done
                             </v-btn>
 
                             <p v-if="isDoneToday(challenge.done_at)">今日は達成済み</p>
+                            <p>{{challenge.is_done}}</p>
                         </div>
 
                         <div v-if="!challenge.is_started && !challenge.done_at">
@@ -82,6 +83,7 @@ export default {
                     continuation: this.continuation,
                     done_at: null,
                     is_started: true,
+                    is_done: false,
                 }
             }
         },
@@ -129,8 +131,6 @@ export default {
                     
                     if(this.yesterday > last_done && res.data[i].continuation > 0) { //もし最後の更新が昨日以前なら
                         this.toZero(res.data[i].id, res.data[i].cleared, res.data[i].done_at) // continuationを0にするメソッド発火
-                    } else {
-                        console.log(last_done, this.yesterday, "計算できてない")
                     }
                     
                 }
@@ -160,6 +160,13 @@ export default {
         },
         start(id) {
             const url = `/api/v1/challenges/${id}`
+
+            //paramsの値をしっかり初期値にしておく
+            this.params.challenge.done_at = null 
+            this.params.challenge.cleared = 0
+            this.params.challenge.continuation = 0
+            this.params.challenge.is_done = false
+
             this.$axios.put(url, this.params)
                 .then((res) => {
                     this.getMyChallenges() // challengesを再取得  
@@ -168,17 +175,27 @@ export default {
                     console.log("error.")
                 })  
         },
-        pushDone(id, cleared, continuation, done_at, idx) {
+        pushDone(id, cleared, continuation, done_at, goal) {
             const url = `/api/v1/challenges/${id}`
             this.params.challenge.cleared = cleared + 1
             this.params.challenge.done_at = new Date
             done_at = new Date(done_at); // jsonのdateをjsのDateに変換
 
+            console.log(goal, this.params.challenge.cleared)
             if (done_at < this.yesterday) { //Doneが押された時の昨日の日付とdone_atを比較
                 continuation = 0 //最後のDoneが昨日より前と判定されたら、continuationを一旦0にする
             }
 
             this.params.challenge.continuation = continuation + 1
+            this.params.challenge.done_at = new Date()
+            console.log(this.params.challenge.done_at)
+
+            if (this.params.challenge.cleared >= goal) { // clearedが目標日数をに到達したら終了
+                this.params.challenge.is_done = true
+                console.log("終了")
+            } else {
+                this.params.challenge.is_done = false
+            }
 
             
 
