@@ -1,6 +1,6 @@
 class Api::V1::ChallengesController < ApplicationController
     def index
-        @challenges = Challenge.where(user_id: params[:user_id]).order(:id)
+        @challenges = Challenge.where(user_id: params[:user_id]).where(is_done: false).order(:id)
         render json: @challenges, status: 200
     end
 
