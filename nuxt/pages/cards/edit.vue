@@ -43,6 +43,7 @@
 
 <script>
 export default {
+    name: "CardEdit",
     props: {
         title: String,
         detail: String, 

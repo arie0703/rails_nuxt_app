@@ -2,6 +2,8 @@
     <v-container>
         <p>{{user.name}}さんのマイページ</p>
         <p>{{user.email}}</p>
+        <UserEdit v-if="$auth.user.id == user.id" @updateData="fetchContent" :email.sync="user.email" :name.sync="user.name"></UserEdit>
+        
 
         <strong>マイチャレンジ</strong>
         <v-row>
@@ -94,10 +96,12 @@
 </style>
 <script>
 import Stamps from '../challenges/stamps.vue'
+import UserEdit from './edit.vue'
 export default {
     auth: false,
     components: {
-        Stamps
+        Stamps,
+        UserEdit,
     },
     data: () => {
         return {
