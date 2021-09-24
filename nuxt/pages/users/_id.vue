@@ -12,7 +12,18 @@
             class="stamp-card"
             >
                 <v-container>
-                    <v-card-text>{{ challenge.title }}</v-card-text>
+                    <v-card-text>
+                        {{ challenge.title }}
+                        <v-btn
+                        icon
+                        class="float-right delete-btn"
+                        @click="showAlert = true; deleteId=challenge.id"
+                        >
+                            <v-icon>mdi-minus</v-icon>
+                        </v-btn>
+
+                    </v-card-text>
+
                     <v-card-text>
                         達成日数: {{ challenge.cleared}} 
                         継続: {{ challenge.continuation }}
@@ -45,12 +56,40 @@
                 </v-container>
             </v-card>
         </v-row>
+
+
+        <v-dialog
+        v-model="showAlert"
+        width="500"
+        >
+            
+            <v-card-text v-if="showAlert">
+                <v-alert
+                    color="orange"
+                    type="info"
+                >
+                削除したら戻せないよ！
+                <p>id: {{deleteId}}</p>
+                </v-alert>
+                <v-btn @click="destroy()">削除</v-btn>
+                <v-btn v-on:click="showAlert=false">キャンセル</v-btn>
+            </v-card-text>
+            
+        </v-dialog>
     </v-container>
 </template>
 
 <style scoped>
 .v-card {
     margin: 10px;
+}
+
+.v-dialog {
+    background: #333;
+}
+
+.delete-btn {
+    margin: -6px;
 }
 </style>
 <script>
@@ -68,6 +107,8 @@ export default {
             cleared: 0,
             yesterday: new Date(),
             today: new Date(),
+            showAlert: false,
+            deleteId: 0,
         }
     },
     mounted() {
@@ -175,10 +216,26 @@ export default {
                     console.log("error.")
                 })  
         },
+        destroy() {
+            const url = `/api/v1/challenges/${this.deleteId}`
+
+            this.$axios.delete(url)
+                .then(() => {
+                    this.getMyChallenges()
+                    this.showAlert = false;
+                
+                })
+                .catch((err) => {
+                const message = err.response.data
+                this.$bvToast.toast(message, {
+                    title: 'エラー',
+                    variant: 'danger'
+                })
+            })
+        },
         pushDone(id, cleared, continuation, done_at, goal) {
             const url = `/api/v1/challenges/${id}`
             this.params.challenge.cleared = cleared + 1
-            this.params.challenge.done_at = new Date
             done_at = new Date(done_at); // jsonのdateをjsのDateに変換
 
             console.log(goal, this.params.challenge.cleared)
