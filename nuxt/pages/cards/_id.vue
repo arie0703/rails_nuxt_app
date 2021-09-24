@@ -25,7 +25,7 @@
         >
           一覧に戻る
         </v-btn>
-        <Edit v-if="$auth.user.id == card.user_id" @updateData="fetchContent" :title.sync="card.title" :detail.sync="card.detail" :goal.sync="card.goal"></Edit>
+        <CardEdit v-if="$auth.user.id == card.user_id" @updateData="fetchContent" :title.sync="card.title" :detail.sync="card.detail" :goal.sync="card.goal"></CardEdit>
         <v-btn v-if="$auth.user.id == card.user_id" v-on:click="showAlert = true">削除</v-btn>
         <v-btn
           size="sm"
@@ -110,12 +110,12 @@
 </style>
 
 <script>
-import Edit from './edit.vue'
+import CardEdit from './edit.vue'
 import Stamps from '../challenges/stamps.vue'
 export default {
   auth: false,
   components: {
-    Edit,
+    CardEdit,
     Stamps
   },
   data: () => {

@@ -10,7 +10,7 @@ Rails.application.routes.draw do
       }
 
       namespace :auth do
-        resources :user, only: [:show]
+        resources :user, only: [:show, :update]
       end
     end
   end
