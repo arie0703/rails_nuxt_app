@@ -5,9 +5,6 @@
       <v-card-text>
         <strong>{{ card.title }}</strong>
       </v-card-text>
-      <v-card-text>
-        {{ card.detail }}
-      </v-card-text>
       
       <Stamps :cleared="0" :goal="card.goal"></Stamps>
 
@@ -75,6 +72,16 @@
         </v-card-text>
         </v-dialog>
       </v-row>
+
+      <v-container>
+        <p>投稿者: 
+          <span class="user-link" @click="$router.push((`/users/${user.id}`))">{{user.name}}</span>
+        </p>
+
+        <p>
+          {{ card.detail }}
+        </p>
+      </v-container>
     </div>
     </v-row>
   </div>
@@ -99,6 +106,15 @@
   margin: 0;
 }
 
+.user-link {
+  cursor: pointer;
+}
+
+.user-link:hover {
+  color: orange;
+  transition: 0.4s;
+}
+
 
 
 </style>
@@ -121,6 +137,7 @@ export default {
   data: () => {
     return {
       card: {},
+      user: {}, // 投稿者の情報
       isShowAddForm: false,
       isShowMessage: false,
       goal: 0,
@@ -159,11 +176,23 @@ export default {
             this.goal = this.card.goal
             // this.setStampArea(this.goal)
             console.log(res.data)
-            this.display = true; // cardのデータを受け取ってからビューを表示させないとエラーになる
+            this.getUserInfo()
         })
         .catch(() => {
             this.toTop()
         })
+    },
+    getUserInfo() {
+      const url = `/api/v1/auth/user/${this.card.user_id}`
+      this.$axios.get(url)
+      .then((res) => {
+            this.user = res.data
+            this.display = true; // card, userのデータを受け取ってからビューを表示させないとエラーになる
+        })
+        .catch(() => {
+            this.toTop()
+        })
+      
     },
     toTop() {
         this.$router.push(`/cards`)
