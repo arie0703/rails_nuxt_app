@@ -27,10 +27,11 @@
         <v-btn
           size="sm"
           @click="isShowAddForm = true"
-          v-if="$auth.loggedIn"
+          v-if="participated == false && $auth.loggedIn"
         >
           マイチャレンジに追加
         </v-btn>
+        <v-btn v-if="participated == true">参加済み</v-btn>
 
         <v-dialog
         width="500"
@@ -81,6 +82,13 @@
         <p>
           {{ card.detail }}
         </p>
+
+        <strong>参加者一覧</strong>
+        <v-row>
+          <div v-for="p in participations" :key="p.id">
+            {{ p.user.name }}
+          </div>
+        </v-row>
       </v-container>
     </div>
     </v-row>
@@ -138,6 +146,8 @@ export default {
     return {
       card: {},
       user: {}, // 投稿者の情報
+      participations: {},
+      participated: false,
       isShowAddForm: false,
       isShowMessage: false,
       goal: 0,
@@ -148,7 +158,7 @@ export default {
     }
   },
   computed: {
-    params() {
+    params_challenge() {
       return {
         challenge: { // 保存する内容
           title: this.card.title,
@@ -162,6 +172,15 @@ export default {
         }
       }
     },
+
+    params_participation() {
+      return {
+        participation: {
+          card_id: this.$route.params.id,
+          user_id: this.$auth.user.id,
+        }
+      }
+    }
   },
 
   mounted() {
@@ -176,6 +195,18 @@ export default {
             this.goal = this.card.goal
             // this.setStampArea(this.goal)
             console.log(res.data)
+            this.isAlreadyParticipated()
+            this.getParticipation()
+        })
+        .catch(() => {
+            this.toTop()
+        })
+    },
+    getParticipation() {
+      const url = `/api/v1/participations?card_id=${this.card.id}`
+      this.$axios.get(url)
+      .then((res) => {
+            this.participations = res.data
             this.getUserInfo()
         })
         .catch(() => {
@@ -194,18 +225,44 @@ export default {
         })
       
     },
+    isAlreadyParticipated() {
+      const url = `/api/v1/already_participated?card_id=${this.card.id}&user_id=${this.$auth.user.id}`
+      this.$axios.get(url)
+      .then((res) => {
+          
+          
+          this.participated = res.data
+          console.log(this.participated)
+      })
+      .catch(() => {
+          this.toTop()
+      })
+    },
+    
     toTop() {
         this.$router.push(`/cards`)
     },
     addToChallenge() {
       const url = "/api/v1/challenges"
-      console.log(this.goal, this.params.goal)
-      this.$axios.post(url, this.params)
+      console.log(this.goal, this.params_challenge.goal)
+      this.$axios.post(url, this.params_challenge)
         .then((res) => {
           // 保存成功時
           console.log(res)
+          this.createParticipation()
           this.isShowAddForm = false
           this.isShowMessage = true;
+        })
+        .catch((err) => {
+          // 保存失敗時
+        })
+    },
+    createParticipation() { // 中間テーブルのデータも作成
+      const url = "/api/v1/participations"
+      this.$axios.post(url, this.params_participation)
+        .then((res) => {
+          // 保存成功時
+          console.log(res)
         })
         .catch((err) => {
           // 保存失敗時
