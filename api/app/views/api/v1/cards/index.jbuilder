@@ -4,6 +4,10 @@ json.cards @cards do |card| #一覧取得
     json.extract! card, :id, :title, :detail, :goal, :created_at, :user_id
 end
 
+json.participations @participations do |participation| #一覧取得
+    json.extract! participation, :id, :card_id, :user_id, :created_at
+end
+
 json.challenges @challenges do |challenge| #一覧取得
     json.extract! challenge, :id, :title, :detail, :continuation, :goal, :cleared, :is_started, :is_done, :start_date, :end_date, :created_at, :user_id
 end
@@ -14,4 +18,8 @@ end
 
 json.card do #詳細画面
     json.extract! @card
+end
+
+json.participation do
+    json.extract! @participation
 end
