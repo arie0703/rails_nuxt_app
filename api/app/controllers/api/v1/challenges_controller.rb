@@ -7,7 +7,7 @@ class Api::V1::ChallengesController < ApplicationController
     def create
         challenge = Challenge.new(challenge_params)
         if challenge.save
-            render json: '作成に成功しました', status: 200
+            render json: challenge, status: 200
         else
             render json: '作成に失敗しました', status: 500
         end

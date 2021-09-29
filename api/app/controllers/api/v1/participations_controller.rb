@@ -42,6 +42,6 @@ class Api::V1::ParticipationsController < ApplicationController
     private
 
     def participation_params
-        params.require(:participation).permit(:card_id, :user_id, :user_cleared)
+        params.require(:participation).permit(:card_id, :user_id, :challenge_id)
     end
 end

@@ -158,7 +158,7 @@ export default {
     }
   },
   computed: {
-    params_challenge() {
+    params() {
       return {
         challenge: { // 保存する内容
           title: this.card.title,
@@ -169,18 +169,14 @@ export default {
           is_started: false,
           is_done: false,
           user_id: this.$auth.user.id,
-        }
-      }
-    },
-
-    params_participation() {
-      return {
+        },
         participation: {
           card_id: this.$route.params.id,
           user_id: this.$auth.user.id,
+          challenge_id: null,
         }
       }
-    }
+    },
   },
 
   mounted() {
@@ -195,7 +191,6 @@ export default {
             this.goal = this.card.goal
             // this.setStampArea(this.goal)
             console.log(res.data)
-            this.isAlreadyParticipated()
             this.getParticipation()
         })
         .catch(() => {
@@ -208,6 +203,7 @@ export default {
       .then((res) => {
             this.participations = res.data
             this.getUserInfo()
+            this.isAlreadyParticipated() // participationのデータが呼び出されるたびに、ログイン中ユーザーの参加情報判定
         })
         .catch(() => {
             this.toTop()
@@ -244,11 +240,11 @@ export default {
     },
     addToChallenge() {
       const url = "/api/v1/challenges"
-      console.log(this.goal, this.params_challenge.goal)
-      this.$axios.post(url, this.params_challenge)
+      this.$axios.post(url, this.params.challenge)
         .then((res) => {
           // 保存成功時
-          console.log(res)
+          console.log(res.data.id)
+          this.params.participation.challenge_id = res.data.id
           this.createParticipation()
           this.isShowAddForm = false
           this.isShowMessage = true;
@@ -259,14 +255,17 @@ export default {
     },
     createParticipation() { // 中間テーブルのデータも作成
       const url = "/api/v1/participations"
-      this.$axios.post(url, this.params_participation)
-        .then((res) => {
-          // 保存成功時
-          console.log(res)
-        })
-        .catch((err) => {
-          // 保存失敗時
-        })
+      this.$axios.post(url, this.params.participation)
+      .then((res) => {
+        // 保存成功時
+        console.log(res)
+        this.getParticipation()
+      })
+      .catch((err) => {
+        // 保存失敗時
+      })
+      
+      
     },
     destroy() {
       const url = `/api/v1/cards/${this.$route.params.id}`
