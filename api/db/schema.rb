@@ -43,9 +43,11 @@ ActiveRecord::Schema.define(version: 2021_09_27_034715) do
   create_table "participations", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "card_id", null: false
+    t.bigint "challenge_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["card_id"], name: "index_participations_on_card_id"
+    t.index ["challenge_id"], name: "index_participations_on_challenge_id"
     t.index ["user_id"], name: "index_participations_on_user_id"
   end
 
@@ -80,5 +82,6 @@ ActiveRecord::Schema.define(version: 2021_09_27_034715) do
   end
 
   add_foreign_key "participations", "cards"
+  add_foreign_key "participations", "challenges"
   add_foreign_key "participations", "users"
 end
