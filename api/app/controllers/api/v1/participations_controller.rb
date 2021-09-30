@@ -2,7 +2,7 @@ class Api::V1::ParticipationsController < ApplicationController
     def index
         @participations = Participation.where(card_id: params[:card_id])
         #ユーザーの情報もparticipationのjsonファイルから取れるようにしておく
-        render json: @participations.to_json(:include => [:user]), status: 200
+        render json: @participations.to_json(:include => [:user, :challenge]), status: 200
     end
 
     def create

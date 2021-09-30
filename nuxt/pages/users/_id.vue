@@ -1,7 +1,8 @@
 <template>
     <v-container>
         <div class="user-info-top">
-            <img class="user-image" :src="user_image">
+            <img v-if="user_image" class="user-image" :src="user_image">
+            <img v-if="!user_image" class="user-image" src="/noicon.jpeg">
             <p>{{user.name}}さんのマイページ</p>
         </div>
         <p>{{user.email}}</p>
@@ -107,6 +108,8 @@
     width: 50px;
     height: 50px;
     margin-right: 10px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 </style>
 <script>
