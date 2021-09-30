@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
       namespace :auth do
         resources :user, only: [:show, :update]
+        resources :user_img, only: [:update]
       end
     end
   end

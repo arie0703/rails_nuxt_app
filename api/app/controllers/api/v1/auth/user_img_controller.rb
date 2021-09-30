@@ -1,9 +1,4 @@
-class Api::V1::Auth::UserController < ApplicationController
-    def show
-        @user = User.find_by(id: params[:id])
-        render json: @user, status: 200
-    end
-
+class Api::V1::Auth::UserImgController < ApplicationController
     def update
         user = User.find_by(id: params[:id])
         if user.update(user_params)
@@ -14,8 +9,7 @@ class Api::V1::Auth::UserController < ApplicationController
     end
 
     private
-
     def user_params
-        params.require(:user).permit(:email, :name)
+        params.permit(:image)
     end
 end
