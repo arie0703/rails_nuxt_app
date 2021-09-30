@@ -86,7 +86,14 @@
         <strong>参加者一覧</strong>
         <v-row>
           <div v-for="p in participations" :key="p.id">
-            {{ p.user.name }}
+            <div class="user-info">
+              <img v-if="p.user.image.url" :src="p.user.image.url" @click="$router.push((`/users/${p.user.id}`))" class="user-link">
+              <img v-if="!p.user.image.url" src="/noicon.jpeg" @click="$router.push((`/users/${p.user.id}`))" class="user-link">
+              <div class="mouseover-info">
+                <p>{{ p.user.name }}</p>
+                <p>{{ p.challenge.cleared }} 日達成中！</p>
+              </div>
+            </div>
           </div>
         </v-row>
       </v-container>
@@ -121,6 +128,41 @@
 .user-link:hover {
   color: orange;
   transition: 0.4s;
+}
+
+img {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border: solid 1px #222;
+}
+
+.user-info {
+  position: relative;
+}
+
+.user-info img:hover + .mouseover-info {
+  display: block;
+}
+
+.mouseover-info {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 50px;
+  width: 180px;
+  padding: 10px;
+  background: rgba(40,40,40,0.95);
+  border-radius: 5px;
+  box-shadow: 2px 1px 1px 1px rgba(15, 15, 15, 0.7);
+  font-size: 13px;
+  z-index: 2;
+
+}
+
+.mouseover-info p {
+  margin-bottom: 2px;
 }
 
 
