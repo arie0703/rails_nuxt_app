@@ -1,7 +1,11 @@
 <template>
     <v-container>
-        <p>{{user.name}}さんのマイページ</p>
+        <div class="user-info-top">
+            <img class="user-image" :src="user_image">
+            <p>{{user.name}}さんのマイページ</p>
+        </div>
         <p>{{user.email}}</p>
+        
         <UserEdit v-if="$auth.user.id == user.id" @updateData="fetchContent" :email.sync="user.email" :name.sync="user.name"></UserEdit>
         
 
@@ -93,6 +97,17 @@
 .delete-btn {
     margin: -6px;
 }
+
+.user-info-top {
+    display: flex;
+    line-height: 50px;
+}
+
+.user-image {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
 </style>
 <script>
 import Stamps from '../challenges/stamps.vue'
@@ -106,6 +121,7 @@ export default {
     data: () => {
         return {
             user: {},
+            user_image: "",
             challenges: [],
             continuation: 0,
             cleared: 0,
@@ -152,6 +168,8 @@ export default {
             .then((res) => {
                 this.user = res.data
                 // console.log(res.data)
+                console.log(this.user.image)
+                this.user_image = this.user.image.url
             })
             .catch(() => {
                 console.log("error");

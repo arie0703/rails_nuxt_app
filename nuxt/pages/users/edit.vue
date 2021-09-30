@@ -26,6 +26,14 @@
                         >
                         </v-text-field>
 
+                        <v-file-input
+                        truncate-length="15"
+                        @change="setImage"
+                        label="プロフィール画像"
+                        accept="image/png, image/jpeg, image/bmp"
+                        >
+                        </v-file-input>
+
                         <v-btn @click="update">
                             Update
                         </v-btn>
@@ -54,6 +62,7 @@ export default {
             card: {},
             edit_email: '',
             edit_name: '',
+            image: {},
         }
     },
     computed: { // propsで受け取った値はcomputed内部でreturnしなきゃいけない
@@ -62,7 +71,7 @@ export default {
                 user: {
                     email: this.edit_email,
                     name: this.edit_name,
-                }
+                },
             }
         },
         setEditForm() {
@@ -74,16 +83,45 @@ export default {
             this.setEditForm // モーダルが呼び出される時点でedit_titleなどのフォーム用変数にpropsの値代入
             this.display = true
         },
+        setImage(e) {
+            console.log(e)
+            this.image = e;
+            this.params.user.image = this.image
+            console.log(this.params.user.image)
+        },
         update() {
             const url = `/api/v1/auth/user/${this.$route.params.id}`
-            this.$axios.put(url, this.params)
+            this.$axios.put(url, this.params.user)
                 .then((res) => {
+                    if(this.image) {
+                        this.uploadImage()
+                    }
                     this.updateData() //親ビューのデータ更新メソッドを発火
                     this.display = false
                 })
                 .catch((err) => {
                     console.log("error.")
                 })
+        },
+        uploadImage() {
+            const url = `/api/v1/auth/user_img/${this.$route.params.id}`
+            const formData = new FormData();
+            formData.append("image", this.image);
+            const config = {
+                headers: {
+                    "content-type": "multipart/form-data",
+                }
+            };
+            this.$axios.put(url, formData, config)
+                .then((res) => {
+                    console.log(config)
+                    this.updateData() //親ビューのデータ更新メソッドを発火
+                    this.display = false
+                })
+                .catch((err) => {
+                    console.log("error.")
+                })
+
         },
         updateData() {
             this.$emit('updateData');
