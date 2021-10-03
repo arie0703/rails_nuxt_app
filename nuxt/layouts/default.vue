@@ -145,13 +145,15 @@ export default {
     }
   },
   mounted() {
-    this.autoLogout()
+    this.setUserInfo()
     console.log(this.$auth.user)
   },
   methods: {
-    autoLogout() {
-      if (this.$auth.loggedIn && !this.$auth.user.id) { //ログイン中なのにユーザー情報が空になってるときは一旦ログアウト
-        this.$auth.logout()
+    setUserInfo() {
+      if (this.$auth.loggedIn && !this.$auth.user.id) { //リロードした際にstateのユーザー情報が空になるので、ローカルストレージに保存した情報を持ってくる
+        var usrinfo = JSON.parse(localStorage.getItem("user_info")).auth.user;
+        console.log(usrinfo)
+        this.$auth.user = usrinfo
       }
     },
     toMypage(id) {
