@@ -7,6 +7,9 @@ Rails.application.routes.draw do
       resources :challenges, only: [:index, :create, :show, :destroy, :update]
       resources :participations, only: [:index, :create, :show, :destroy, :update]
       resources :already_participated, only: [:index]
+
+      get '/challenges_done' => 'challenges#done_list'
+
       mount_devise_token_auth_for "User", at: "auth", controllers: {
         registrations: 'api/v1/auth/registrations'
       }
