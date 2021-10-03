@@ -20,7 +20,7 @@
 
         <Stamps :cleared="challenge.cleared" :goal="challenge.goal"></Stamps>
 
-        <div class="private-area" v-if="$auth.user.id == $route.params.id">
+        <div class="private-area" v-if="$auth.user.id == $route.params.id && !challenge.is_done">
 
 
             <div v-if="challenge.is_started || challenge.done_at">
@@ -40,6 +40,10 @@
                 <v-card-text>ボタンを押してスタート！</v-card-text>
                 <v-btn @click="start(challenge.id)">START</v-btn>
             </div>
+        </div>
+
+        <div class="ended" v-if="challenge.is_done == true">
+            <v-card-text>達成済み</v-card-text>
         </div>
 
 
@@ -64,14 +68,24 @@
     </v-container>
 </template>
 
+<style scoped>
+.v-dialog {
+    background: #333;
+}
+
+.delete-btn {
+    margin: -6px;
+}
+</style>
+
 <script>
 import Stamps from './stamps.vue'
 export default {
     name: "CardView",
     props: {
         challenge: Object,
-        today: String,
-        yesterday: String,
+        today: Date,
+        yesterday: Date,
     },
     components: {
         Stamps,

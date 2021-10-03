@@ -11,6 +11,12 @@
         
 
         <strong>マイチャレンジ</strong>
+        <v-container class="challenge-menu">
+            <v-row>
+                <span class="content on" id="content-1" @click="clickMenu(1)">着手中</span>
+                <span class="content" id="content-2" @click="clickMenu(2)">達成済み</span>
+            </v-row>
+        </v-container>
         <v-row>
             <v-card
             v-for="challenge in challenges"
@@ -29,13 +35,6 @@
     margin: 10px;
 }
 
-.v-dialog {
-    background: #333;
-}
-
-.delete-btn {
-    margin: -6px;
-}
 
 .user-info-top {
     display: flex;
@@ -48,6 +47,25 @@
     margin-right: 10px;
     border-radius: 50%;
     object-fit: cover;
+}
+
+.challenge-menu {
+    padding: 25px 10px;
+}
+
+.challenge-menu .content {
+    margin-right: 10px;
+}
+
+.challenge-menu .content:hover {
+    cursor: pointer;
+    color: orange;
+    transition: 0.4s;
+}
+
+.on {
+    color: orange;
+    border-bottom: solid 1px;
 }
 </style>
 <script>
@@ -69,6 +87,7 @@ export default {
             yesterday: new Date(),
             today: new Date(),
             deleteId: 0,
+            selectedMenu: 1,
         }
     },
     mounted() {
@@ -121,7 +140,12 @@ export default {
             this.today.setHours(0, 0, 0, 0);
         },
         getMyChallenges() {
-            const url = `/api/v1/challenges?user_id=${this.$route.params.id}`
+            let url = `/api/v1/challenges?user_id=${this.$route.params.id}`
+            if (this.selectedMenu == 2) {
+                url = `/api/v1/challenges_done?user_id=${this.$route.params.id}`
+            }
+            console.log(url)
+            
             this.$axios.get(url)
                 .then((res) => {
                 console.log("データ更新メソッドが発火")
@@ -161,6 +185,25 @@ export default {
                 console.log("error.")
             })
         },
+        clickMenu(n) {
+            var c1 = document.getElementById("content-1");
+            var c2 = document.getElementById("content-2");
+
+            if (this.selectedMenu != n) {
+                if(n === 1) {
+                    c1.classList.add("on")
+                    c2.classList.remove("on")
+                    this.selectedMenu = 1;
+                } else if (n === 2) {
+                    c2.classList.add("on")
+                    c1.classList.remove("on")
+                    this.selectedMenu = 2;
+                }
+            }
+            
+
+            this.getMyChallenges()
+        }
 
 
     }

@@ -4,6 +4,11 @@ class Api::V1::ChallengesController < ApplicationController
         render json: @challenges, status: 200
     end
 
+    def done_list
+      @challenges = Challenge.where(user_id: params[:user_id]).where(is_done: true)
+      render json: @challenges, status: 200
+    end
+
     def create
         challenge = Challenge.new(challenge_params)
         if challenge.save
