@@ -151,16 +151,20 @@ export default {
                 console.log("データ更新メソッドが発火")
                 console.log(res.data);
                 console.log(this.yesterday)
-                for(let i = 0; i < res.data.length; i++) { // ここで最後にDoneボタンを押したのが昨日より前かを判定
-                    var last_done = new Date(res.data[i].done_at) // jsで
+                if (this.selectedMenu == 1) { // 継続日数リセット処理は着手中のチャレンジのみ適用
+                    for(let i = 0; i < res.data.length; i++) { // ここで最後にDoneボタンを押したのが昨日より前かを判定
 
-                    console.log(last_done, res.data[i].done_at)
-                    
-                    if(this.yesterday > last_done && res.data[i].continuation > 0) { //もし最後の更新が昨日以前なら
-                        this.toZero(res.data[i].id, res.data[i].cleared, res.data[i].done_at) // continuationを0にするメソッド発火
+                        var last_done = new Date(res.data[i].done_at) // jsで
+
+                        console.log(last_done, res.data[i].done_at)
+                        
+                        if(this.yesterday > last_done && res.data[i].continuation > 0) { //もし最後の更新が昨日以前なら
+                            this.toZero(res.data[i].id, res.data[i].cleared, res.data[i].done_at) // continuationを0にするメソッド発火
+                        }
+                        
                     }
-                    
                 }
+                
                 this.challenges = res.data
                 })
                 .catch((err) => {
