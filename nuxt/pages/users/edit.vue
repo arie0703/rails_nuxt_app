@@ -33,7 +33,6 @@
                         accept="image/png, image/jpeg, image/bmp"
                         >
                         </v-file-input>
-
                         <v-btn @click="update">
                             Update
                         </v-btn>
@@ -62,7 +61,7 @@ export default {
             card: {},
             edit_email: '',
             edit_name: '',
-            image: {},
+            image: null,
         }
     },
     computed: { // propsで受け取った値はcomputed内部でreturnしなきゃいけない
@@ -86,14 +85,12 @@ export default {
         setImage(e) {
             console.log(e)
             this.image = e;
-            this.params.user.image = this.image
-            console.log(this.params.user.image)
         },
         update() {
             const url = `/api/v1/auth/user/${this.$route.params.id}`
             this.$axios.put(url, this.params.user)
                 .then((res) => {
-                    if(this.image) {
+                    if (this.image) { // imageがnullの時（アップロードされてない時）は画像更新処理しない
                         this.uploadImage()
                     }
                     this.updateData() //親ビューのデータ更新メソッドを発火
